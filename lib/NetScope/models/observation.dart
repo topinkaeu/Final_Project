@@ -1,6 +1,6 @@
-class observation {
+class Observation {
   final String title;
   final String description;
 
-  observation({required this.title, required this.description});
+  Observation({required this.title, required this.description});
 }
