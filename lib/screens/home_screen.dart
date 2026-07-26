@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:final_project/NetScope/data/history_repository.dart';
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -39,6 +40,11 @@ class _HomeScreenState extends State<HomeScreen> {
       final analysis = TrafficAnalyzer().analyze(packets);
       final assessment = AssessmentEngine().assess(analysis);
 
+      await HistoryRepository().save(
+        fileName: picked.name,
+        assessment: assessment,
+      );
+
       if (!mounted) return;
       setState(() => _loading = false);
 
@@ -51,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _error = "Couldn't analyze this file: $e";
+        _error = "Failed to analyze the selected PCAP file.\n${e.toString()}";
       });
     }
   }
@@ -96,15 +102,21 @@ class _HomeScreenState extends State<HomeScreen> {
               // Drop / choose file card
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 32,
+                  horizontal: 16,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFEFF0FF),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
                   children: [
-                    Icon(Icons.create_new_folder_outlined,
-                        size: 48, color: Colors.indigo.shade700),
+                    Icon(
+                      Icons.create_new_folder_outlined,
+                      size: 48,
+                      color: Colors.indigo.shade700,
+                    ),
                     const SizedBox(height: 12),
                     const Text(
                       "Drop Wireshark File Here",
@@ -135,8 +147,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   strokeWidth: 2,
                                 ),
                               )
-                            : const Text("Choose File",
-                                style: TextStyle(color: Colors.white)),
+                            : const Text(
+                                "Choose File",
+                                style: TextStyle(color: Colors.white),
+                              ),
                       ),
                     ),
                     if (_error != null) ...[
@@ -156,32 +170,61 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Last Analyzed",
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text("View All",
-                      style: TextStyle(color: Colors.indigo.shade700, fontSize: 12)),
+                  const Text(
+                    "Last Analyzed",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "View All",
+                    style: TextStyle(
+                      color: Colors.indigo.shade700,
+                      fontSize: 12,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 12),
               Row(
                 children: const [
-                  Expanded(child: _StaticHistoryCard(
-                    name: "mobile.pcap", size: "33.00 MB",
-                    packets: "1,678", status: "Completed", isWarning: false,
-                  )),
+                  Expanded(
+                    child: _StaticHistoryCard(
+                      name: "mobile.pcap",
+                      size: "33.00 MB",
+                      packets: "1,678",
+                      status: "Completed",
+                      isWarning: false,
+                    ),
+                  ),
                   SizedBox(width: 12),
-                  Expanded(child: _StaticHistoryCard(
-                    name: "mobile.pcap", size: "123.00 MB",
-                    packets: "1,678", status: "Warning", isWarning: true,
-                  )),
+                  Expanded(
+                    child: _StaticHistoryCard(
+                      name: "mobile.pcap",
+                      size: "123.00 MB",
+                      packets: "1,678",
+                      status: "Warning",
+                      isWarning: true,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
 
               // Static nav rows — no functionality yet
-              const _StaticActionRow(icon: Icons.storage, title: "Open Your Storage", subtitle: "Browse and view your storage"),
-              const _StaticActionRow(icon: Icons.help_outline, title: "Help & Guide", subtitle: "Learn how to use the app"),
-              const _StaticActionRow(icon: Icons.language, title: "Report Issue", subtitle: "Found a bug? Let us know"),
+              const _StaticActionRow(
+                icon: Icons.storage,
+                title: "Open Your Storage",
+                subtitle: "Browse and view your storage",
+              ),
+              const _StaticActionRow(
+                icon: Icons.help_outline,
+                title: "Help & Guide",
+                subtitle: "Learn how to use the app",
+              ),
+              const _StaticActionRow(
+                icon: Icons.language,
+                title: "Report Issue",
+                subtitle: "Found a bug? Let us know",
+              ),
             ],
           ),
         ),
@@ -194,8 +237,11 @@ class _StaticHistoryCard extends StatelessWidget {
   final String name, size, packets, status;
   final bool isWarning;
   const _StaticHistoryCard({
-    required this.name, required this.size,
-    required this.packets, required this.status, required this.isWarning,
+    required this.name,
+    required this.size,
+    required this.packets,
+    required this.status,
+    required this.isWarning,
   });
 
   @override
@@ -215,19 +261,23 @@ class _StaticHistoryCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(children: [
-                const Icon(Icons.inventory_2_outlined, size: 14),
-                const SizedBox(width: 4),
-                Text(packets, style: const TextStyle(fontSize: 12)),
-              ]),
+              Row(
+                children: [
+                  const Icon(Icons.inventory_2_outlined, size: 14),
+                  const SizedBox(width: 4),
+                  Text(packets, style: const TextStyle(fontSize: 12)),
+                ],
+              ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: isWarning ? Colors.red : Colors.green,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(status,
-                    style: const TextStyle(color: Colors.white, fontSize: 10)),
+                child: Text(
+                  status,
+                  style: const TextStyle(color: Colors.white, fontSize: 10),
+                ),
               ),
             ],
           ),
@@ -240,7 +290,11 @@ class _StaticHistoryCard extends StatelessWidget {
 class _StaticActionRow extends StatelessWidget {
   final IconData icon;
   final String title, subtitle;
-  const _StaticActionRow({required this.icon, required this.title, required this.subtitle});
+  const _StaticActionRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -259,8 +313,14 @@ class _StaticActionRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-                Text(subtitle, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  subtitle,
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
               ],
             ),
           ),
