@@ -65,7 +65,7 @@ class PacketParser {
     final header = ByteData.sublistView(bytes, offset, offset + 16);
 
     final timestampSeconds = header.getUint32(0, Endian.little);
-    final timestampMicroSeconds = header.getUint32(4, Endian.little);
+    header.getUint32(4, Endian.little);
 
     final capturedLength = header.getUint32(8, Endian.little);
 
