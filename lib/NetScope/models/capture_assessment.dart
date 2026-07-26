@@ -5,11 +5,11 @@ import 'package:final_project/NetScope/models/traffic_analysis.dart';
 class CaptureAssessment {
   final TrafficAnalysis trafficAnalysis;
   final List<Observation> observations;
-  final List<Recommendation> recommendation;
+  final List<Recommendation> recommendations;
 
   CaptureAssessment({
     required this.trafficAnalysis,
     required this.observations,
-    required this.recommendation, required List<Recommendation> recommendations,
+    required this.recommendations,
   });
 }
