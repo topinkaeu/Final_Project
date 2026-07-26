@@ -7,5 +7,9 @@ class CaptureAssessment {
   final List<observation> observations;
   final List<Recommendation> recommendation;
 
-  CaptureAssessment({required this.trafficAnalysis, required this.observations, required this.recommendation})
+  CaptureAssessment({
+    required this.trafficAnalysis,
+    required this.observations,
+    required this.recommendation,
+  });
 }
