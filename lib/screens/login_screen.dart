@@ -48,7 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
           'wrong-password' => 'Incorrect password.',
           'invalid-email' => 'Please enter a valid email.',
           'invalid-credential' => 'Incorrect email or password.',
-          _ => 'Login failed: ${e.message}',
+          // _ => 'Login failed: ${e.message}',
+          _ => 'Login failed: [${e.code}] ${e.message}',
         };
       });
     } catch (e) {
@@ -73,6 +74,15 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // IconButton(
+                //   icon: const Icon(Icons.arrow_back),
+                //   onPressed: () => Navigator.pop(context),
+                // ),
+                // const SizedBox(height: 8),
+                // const Text(
+                //   "Welcome Back",
+                //   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                // ),
                 IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () => Navigator.pop(context),
