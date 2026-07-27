@@ -85,6 +85,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 // ),
 
                 TextFormField(
+                  controller: _usernameController,
+                  decoration: const InputDecoration(labelText: "Username"),
+                  validator: (v) => (v == null || v.trim().isEmpty)
+                      ? "Enter a username"
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                
+
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(labelText: "Email"),
+                  validator: (v) => (v == null || !v.contains('@'))
+                      ? "Enter a valid email"
+                      : null,
+                ),
+                const SizedBox(height: 16),
+
+                TextFormField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
@@ -99,26 +119,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           setState(() => _obscurePassword = !_obscurePassword),
                     ),
                   ),
-                  validator: (v) => (v == null || v.length < 6)
-                      ? "Password must be at least 6 characters"
-                      : null,
-                ),
-                const SizedBox(height: 16),
-
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: "Email"),
-                  validator: (v) => (v == null || !v.contains('@'))
-                      ? "Enter a valid email"
-                      : null,
-                ),
-                const SizedBox(height: 16),
-
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: "Password"),
                   validator: (v) => (v == null || v.length < 6)
                       ? "Password must be at least 6 characters"
                       : null,
