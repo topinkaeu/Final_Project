@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'package:final_project/NetScope/data/history_repository.dart';
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -39,12 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
       final packets = PacketParser().parse(picked.bytes);
       final analysis = TrafficAnalyzer().analyze(packets);
       final assessment = AssessmentEngine().assess(analysis);
-
-      await HistoryRepository().save(
-        fileName: picked.name,
-        assessment: assessment,
-      );
-
       if (!mounted) return;
       setState(() => _loading = false);
 
