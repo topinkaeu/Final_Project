@@ -35,9 +35,12 @@
 // }
 
 
-import 'package:final_project/screens/result_screen.dart';
+// import 'package:final_project/screens/result_screen.dart';
+// import 'package:flutter/material.dart';
+// import 'screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_shell.dart';
+import 'package:final_project/screens/result_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -45,12 +48,20 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'NetScope',
-      home: const HomeScreen(),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.indigo,
+        scaffoldBackgroundColor: Colors.white,
+        useMaterial3: true,
+      ),
+      home: const MainShell(),
       routes: {'/results': (context) => const ResultsScreen()},
     );
   }
 }
+

@@ -11,6 +11,7 @@ import '../NetScope/services/pcap_reader.dart';
 import '../NetScope/services/packet_parser.dart';
 import '../NetScope/services/traffic_analyzer.dart';
 import '../NetScope/services/assessment_engine.dart';
+import 'package:final_project/screens/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -74,7 +75,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       const Icon(Icons.notifications_none),
                       const SizedBox(width: 12),
-                      const CircleAvatar(radius: 18),
+                      // const CircleAvatar(radius: 18),
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ProfileScreen(),
+                          ),
+                        ),
+                        child: const CircleAvatar(radius: 18),
+                      ),
                     ],
                   ),
                 ],
