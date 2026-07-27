@@ -2,26 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../NetScope/services/auth_service.dart';
 import 'main_shell.dart';
-import 'register_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  bool _loading = false;
-  // bool _obscurePassword = true;
   bool _obscurePassword = true;
-  
+  bool _loading = false;
   String? _error;
 
-  Future<void> _logIn() async {
+  Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -30,9 +28,10 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      await AuthService().logIn(
+      await AuthService().signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
+        username: _usernameController.text.trim(),
       );
 
       if (!mounted) return;
@@ -44,11 +43,10 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _loading = false;
         _error = switch (e.code) {
-          'user-not-found' => 'No account found with this email.',
-          'wrong-password' => 'Incorrect password.',
+          'email-already-in-use' => 'This email is already registered.',
+          'weak-password' => 'Password should be at least 6 characters.',
           'invalid-email' => 'Please enter a valid email.',
-          'invalid-credential' => 'Incorrect email or password.',
-          _ => 'Login failed: ${e.message}',
+          _ => 'Registration failed: ${e.message}',
         };
       });
     } catch (e) {
@@ -69,38 +67,23 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Form(
             key: _formKey,
             child: Column(
-              
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                const SizedBox(height: 8),
                 const Text(
-                  "Welcome Back",
+                  "Create Account",
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 24),
 
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: "Email"),
-                  validator: (v) => (v == null || !v.contains('@'))
-                      ? "Enter a valid email"
-                      : null,
-                ),
-                const SizedBox(height: 16),
-
                 // TextFormField(
-                //   controller: _passwordController,
-                //   obscureText: true,
-                //   decoration: const InputDecoration(labelText: "Password"),
-                //   validator: (v) =>
-                //       (v == null || v.isEmpty) ? "Enter your password" : null,
+                //   controller: _usernameController,
+                //   decoration: const InputDecoration(labelText: "Username"),
+                //   validator: (v) => (v == null || v.trim().isEmpty)
+                //       ? "Enter a username"
+                //       : null,
                 // ),
+
                 TextFormField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
@@ -120,6 +103,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       ? "Password must be at least 6 characters"
                       : null,
                 ),
+                const SizedBox(height: 16),
+
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(labelText: "Email"),
+                  validator: (v) => (v == null || !v.contains('@'))
+                      ? "Enter a valid email"
+                      : null,
+                ),
+                const SizedBox(height: 16),
+
+                TextFormField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: "Password"),
+                  validator: (v) => (v == null || v.length < 6)
+                      ? "Password must be at least 6 characters"
+                      : null,
+                ),
                 const SizedBox(height: 24),
 
                 if (_error != null)
@@ -134,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _loading ? null : _logIn,
+                    onPressed: _loading ? null : _register,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.indigo.shade900,
                       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -149,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           )
                         : const Text(
-                            "Log In",
+                            "Register",
                             style: TextStyle(color: Colors.white),
                           ),
                   ),
@@ -157,13 +160,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 12),
 
                 TextButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterScreen(),
-                    ),
-                  ),
-                  child: const Text("Don't have an account? Register"),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Already have an account? Log in"),
                 ),
               ],
             ),
