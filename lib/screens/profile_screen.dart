@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../NetScope/services/auth_service.dart';
 import 'login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -6,6 +7,9 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = AuthService().currentUser;
+    final isLoggedIn = user != null;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -38,17 +42,19 @@ class ProfileScreen extends StatelessWidget {
               Center(
                 child: Column(
                   children: [
-                    const CircleAvatar(radius: 45), // no real avatar image yet
+                    const CircleAvatar(radius: 45),
                     const SizedBox(height: 12),
-                    const Text(
-                      "Guest",
-                      style: TextStyle(
+                    Text(
+                      isLoggedIn
+                          ? (user.email?.split('@').first ?? "User")
+                          : "Guest",
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
                     ),
                     Text(
-                      "guest@gmail.com",
+                      isLoggedIn ? user.email! : "guest@gmail.com",
                       style: TextStyle(color: Colors.grey.shade600),
                     ),
                   ],
@@ -107,7 +113,11 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    _infoTile(Icons.person_outline, "Account Type", "Guest"),
+                    _infoTile(
+                      Icons.person_outline,
+                      "Account Type",
+                      isLoggedIn ? "Registered" : "Guest",
+                    ),
                     _divider(),
                     _infoTile(
                       Icons.description_outlined,
@@ -124,31 +134,25 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  // onPressed: () {},
+                  onPressed: () {
+                    if (isLoggedIn) {
+                      AuthService().logOut();
+                      Navigator.pop(context); // or refresh state somehow
+                    } else {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightBlue,
+                    backgroundColor: isLoggedIn ? Colors.red : Colors.lightBlue,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
-
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                  ),
-                  child: const Text(
-                    "SIGNUP or LOGIN",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Text(
+                    isLoggedIn ? "LOG OUT" : "SIGNUP or LOGIN",
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -158,7 +162,6 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
-
   Widget _infoTile(IconData icon, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
